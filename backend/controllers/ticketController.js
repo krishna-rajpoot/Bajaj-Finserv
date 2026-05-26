@@ -92,18 +92,18 @@ const updateTicketStatus = async (req, res, next) => {
       }
     }
 
-    ticket.status = status;
+    let resolvedAt = ticket.resolvedAt;
 
     // Handle resolvedAt
     if (status === 'resolved' && currentStatus !== 'resolved') {
-      ticket.resolvedAt = new Date();
+      resolvedAt = new Date();
     } else if (currentStatus === 'resolved' && status !== 'resolved') {
-      ticket.resolvedAt = null;
+      resolvedAt = null;
     }
 
-    await ticket.save();
+    const updatedTicket = await Ticket.update(req.params.id, { status, resolvedAt });
 
-    res.status(200).json(ticket);
+    res.status(200).json(updatedTicket);
   } catch (error) {
     next(error);
   }
@@ -120,7 +120,7 @@ const deleteTicket = async (req, res, next) => {
       throw new Error('Ticket not found');
     }
 
-    await ticket.deleteOne();
+    await Ticket.deleteOne(req.params.id);
     res.status(200).json({ id: req.params.id, message: 'Ticket removed' });
   } catch (error) {
     next(error);
