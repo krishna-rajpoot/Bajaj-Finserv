@@ -15,7 +15,8 @@ app.use(cors({
 app.use(express.json());
 
 // Routes
-app.use('/api/tickets', ticketRoutes);
+// Support both local dev (/api/tickets) and Vercel serverless (/tickets)
+app.use(['/api/tickets', '/tickets'], ticketRoutes);
 
 // Base route
 app.get('/', (req, res) => {
